@@ -43,7 +43,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         var image = ""
         var icon = ""
 
-        val dataJSON = JSONObject(remoteMessage!!.data);
+        val dataJSON = JSONObject(remoteMessage!!.data)
 
         Log.d("Message", dataJSON.toString())
 
@@ -95,8 +95,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
         }
 
-
-        sendNotification(message, title, color, actions, tag, image, icon)
+        val timestamp = remoteMessage.getSentTime()
+        sendNotification(message, title, color, actions, tag, image, icon, timestamp)
 
     }
 
@@ -105,7 +105,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      *
      * @param messageBody FCM message body received.
      */
-    private fun sendNotification(messageBody: String, title: String, color: String, actions: JSONArray, tag: Int, image_url: String, icon_url: String) {
+    private fun sendNotification(messageBody: String, title: String, color: String, actions: JSONArray, tag: Int, image_url: String, icon_url: String, timestamp: Long) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
@@ -160,6 +160,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     .setContentTitle(title)
                     .setContentText(messageBody)
                     .setAutoCancel(true)
+                    .setShowWhen(true)
+                    .setWhen(timestamp)
                     .setColor(Color.parseColor(color))
             if (URLUtil.isValidUrl(image_url)) {
                 val image = getBitmapFromURL(image_url)
@@ -206,7 +208,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             connection.doInput = true
             connection.connect()
             val input = connection.getInputStream()
-            return BitmapFactory.decodeStream(input);
+            return BitmapFactory.decodeStream(input)
         } catch (e: IOException) {
             return null
         }
